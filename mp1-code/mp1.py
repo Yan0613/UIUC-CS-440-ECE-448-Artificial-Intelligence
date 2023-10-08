@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # mp1.py
 # ---------------
 # Licensing Information:  You are free to use or extend this projects for
@@ -136,6 +138,7 @@ class Application:
         start_color = (255, 0, 0)
         end_color = (0, 255, 0)
 
+#计算每个step下r,g,b值的变化
         r_step = (end_color[0] - start_color[0]) / pathLength
         g_step = (end_color[1] - start_color[1]) / pathLength
         b_step = (end_color[2] - start_color[2]) / pathLength

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # agent.py
 # ---------------
 # Licensing Information:  You are free to use or extend this projects for
@@ -41,6 +43,7 @@ class Agent():
     def canMoveDown(self):
         return self.maze.isValidMove(self.row + 1, self.col)
 
+#移动动作
     def moveRight(self):
         if self.canMoveRight():
             self.lastRow = self.row

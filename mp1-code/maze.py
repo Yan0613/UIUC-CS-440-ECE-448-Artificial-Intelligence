@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # maze.py
 # ---------------
 # Licensing Information:  You are free to use or extend this projects for
@@ -41,6 +43,7 @@ class Maze:
             raise SystemExit
             return
 
+#遍历地图，找出出生点和障碍物
         for row in range(len(self.mazeRaw)):
             for col in range(len(self.mazeRaw[0])):
                 if self.mazeRaw[row][col] == self.__startChar:

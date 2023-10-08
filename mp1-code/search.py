@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # search.py
 # ---------------
 # Licensing Information:  You are free to use or extend this projects for
@@ -21,6 +23,8 @@ files and classes when code is run, so be careful to not modify anything else.
 # Number of states explored should be a number.
 # maze is a Maze object based on the maze from the file specified by input filename
 # searchMethod is the search method specified by --method flag (bfs,dfs,greedy,astar)
+from queue import Queue
+from collections import deque
 
 def search(maze, searchMethod):
     return {
@@ -32,9 +36,58 @@ def search(maze, searchMethod):
 
 
 def bfs(maze):
-    # TODO: Write your code here
-    # return path, num_states_explored
+    start = maze.getStart()
+    objectives = maze.getObjectives()
+    rows, cols = maze.getDimensions()
+
+    path = []
+
+    visited = [[False] * cols for _ in range(rows)]
+    parent = [[None] * cols for _ in range(rows)]
+    queue = deque()
+    queue.append(start)
+    visited[start[0]][start[1]] = True
+
+    while queue:
+        now_position = queue.popleft()
+
+        if now_position in objectives:
+            while now_position != start:
+                path.append(now_position)
+                now_position = parent[now_position[0]][now_position[1]]
+            path.append(start)
+            path.reverse()
+            return path, sum(sum(visited, []))
+
+        row, col = now_position
+        neighbors = maze.getNeighbors(row, col)
+
+        for neighbor in neighbors:
+            x, y = neighbor
+            if not visited[x][y]:
+                queue.append(neighbor)
+                visited[x][y] = True
+                parent[x][y] = now_position
+
     return [], 0
+
+    # # TODO: Write your code here
+    # # return path, num_states_explored
+    # queue = []
+    # visited = set()
+    # queue.append([maze.getStart()])
+    # while queue:
+    #     cur_path = queue.pop(0)
+    #     cur_row, cur_col = cur_path[-1]
+    #     if (cur_row, cur_col) in visited:
+    #         continue
+    #     visited.add((cur_row, cur_col))
+    #     if maze.isObjective(cur_row, cur_col):
+    #         return cur_path, len(visited)
+    #     for item in maze.getNeighbors(cur_row, cur_col):
+    #         if item not in visited:
+    #             queue.append(cur_path + [item])
+    # return [], 0
 
 
 def dfs(maze):
