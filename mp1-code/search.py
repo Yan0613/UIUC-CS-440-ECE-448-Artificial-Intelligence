@@ -93,14 +93,42 @@ def bfs(maze):
 def dfs(maze):
     # TODO: Write your code here
     # return path, num_states_explored
-    return [], 0
+    start = maze.getStart()
+    objectives = maze.getObjectives()
+    rows, cols = maze.getDimensions()
+
+    visited = [[False] * cols for _ in range(rows)]
+    parent = [[None] * cols for _ in range(rows)]
+
+    def dfs_recursive(current):
+        if current in objectives:
+            # Path found, reconstruct it
+            path = []
+            while current != start:
+                path.append(current)
+                current = parent[current[0]][current[1]]
+            path.append(start)
+            path.reverse()
+            return path, sum(sum(visited, []))
+
+        for neighbor in maze.getNeighbors(current[0], current[1]):
+            if not visited[neighbor[0]][neighbor[1]]:
+                visited[neighbor[0]][neighbor[1]] = True
+                parent[neighbor[0]][neighbor[1]] = current
+                result, num_states = dfs_recursive(neighbor)
+                if result:
+                    return result, num_states
+
+        return [], sum(sum(visited, []))
+
+    visited[start[0]][start[1]] = True
+    return dfs_recursive(start)
 
 
 def greedy(maze):
     # TODO: Write your code here
     # return path, num_states_explored
     return [], 0
-
 
 def astar(maze):
     # TODO: Write your code here
