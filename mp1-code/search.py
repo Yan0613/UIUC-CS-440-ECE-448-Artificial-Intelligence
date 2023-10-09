@@ -36,6 +36,8 @@ def search(maze, searchMethod):
 
 
 def bfs(maze):
+    # TODO: Write your code here
+    # return path, num_states_explored
     start = maze.getStart()
     objectives = maze.getObjectives()
     rows, cols = maze.getDimensions()
@@ -50,7 +52,8 @@ def bfs(maze):
 
     while queue:
         now_position = queue.popleft()
-
+        row, col = now_position
+        visited[row][col] = True
         if now_position in objectives:
             while now_position != start:
                 path.append(now_position)
@@ -59,14 +62,13 @@ def bfs(maze):
             path.reverse()
             return path, sum(sum(visited, []))
 
-        row, col = now_position
+
         neighbors = maze.getNeighbors(row, col)
 
         for neighbor in neighbors:
             x, y = neighbor
             if not visited[x][y]:
                 queue.append(neighbor)
-                visited[x][y] = True
                 parent[x][y] = now_position
 
     return [], 0
@@ -93,36 +95,60 @@ def bfs(maze):
 def dfs(maze):
     # TODO: Write your code here
     # return path, num_states_explored
+    stack = []
+    path = []
     start = maze.getStart()
-    objectives = maze.getObjectives()
     rows, cols = maze.getDimensions()
-
+    stack.append(start)
     visited = [[False] * cols for _ in range(rows)]
     parent = [[None] * cols for _ in range(rows)]
 
-    def dfs_recursive(current):
-        if current in objectives:
-            # Path found, reconstruct it
-            path = []
-            while current != start:
-                path.append(current)
-                current = parent[current[0]][current[1]]
+    while stack:
+        now_position = stack.pop()
+        row, col  = now_position
+        visited[row][col] = True
+        if maze.isObjective(row,col):
+            while now_position != start:
+                path.append(now_position)
+                now_position = parent[now_position[0]][now_position[1]]
             path.append(start)
             path.reverse()
+
             return path, sum(sum(visited, []))
 
-        for neighbor in maze.getNeighbors(current[0], current[1]):
-            if not visited[neighbor[0]][neighbor[1]]:
-                visited[neighbor[0]][neighbor[1]] = True
-                parent[neighbor[0]][neighbor[1]] = current
-                result, num_states = dfs_recursive(neighbor)
-                if result:
-                    return result, num_states
+        neighbors = maze.getNeighbors(row, col)
 
-        return [], sum(sum(visited, []))
+        for neighbor in neighbors:
+            x, y = neighbor
+            if not visited[x][y]:
+                stack.append(neighbor)
+                parent[x][y] = now_position
 
-    visited[start[0]][start[1]] = True
-    return dfs_recursive(start)
+    return [], 0
+
+# def dfs(maze):
+#     stack = []
+#     visited = set()
+#     stack.append([maze.getStart()])
+#
+#     while stack:
+#         cur_path = stack.pop()
+#         cur_row, cur_col = cur_path[-1]
+#
+#         if (cur_row, cur_col) in visited:
+#             continue
+#
+#         visited.add((cur_row, cur_col))
+#
+#         if maze.isObjective(cur_row, cur_col):
+#             return cur_path, len(visited)
+#
+#         for item in maze.getNeighbors(cur_row, cur_col):
+#             if item not in visited:
+#                 stack.append(cur_path + [item])
+#
+#     return [], 0
+
 
 
 def greedy(maze):
