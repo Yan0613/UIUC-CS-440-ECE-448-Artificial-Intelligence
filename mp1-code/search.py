@@ -201,7 +201,7 @@ def dfs(maze):
 def greedy(maze):
     # TODO: Write your code here
     # return path, num_states_explored
-    pq = queue.PriorityQueue()
+    pq = queue.PriorityQueue()#具有关联优先级的队列，通常和一个数值一起存储
     visited = set()
     result_row, result_col = maze.getObjectives()[0]
     start_row, start_col = maze.getStart()
@@ -226,7 +226,53 @@ def greedy(maze):
     return [], 0
 
 
+# def astar(maze):
+#     # TODO: Write your code here
+#     # return path, num_states_explored
+#     return [], 0
+
+import heapq
+
 def astar(maze):
-    # TODO: Write your code here
-    # return path, num_states_explored
+    start = maze.getStart()
+    rows, cols = maze.getDimensions()
+    goal = maze.getObjectives()[0]  # 假设有一个目标
+    open_list = [(0, start)]  # 优先级队列，初始节点的优先级为0
+    visited = [[False] * cols for _ in range(rows)]
+    parent = [[None] * cols for _ in range(rows)]
+    g_score = [[float('inf')] * cols for _ in range(rows)]
+    g_score[start[0]][start[1]] = 0
+
+    def heuristic(node):
+        x1, y1 = node
+        x2, y2 = goal
+        return abs(x1 - x2) + abs(y1 - y2)
+
+    while open_list:
+        _, current = heapq.heappop(open_list)
+        row, col = current
+        visited[row][col] = True
+
+        if current == goal:
+            path = []
+            while current != start:
+                path.append(current)
+                current = parent[current[0]][current[1]]
+            path.append(start)
+            path.reverse()
+            return path, sum(sum(visited, []))
+
+        neighbors = maze.getNeighbors(row, col)
+
+        for neighbor in neighbors:
+            x, y = neighbor
+            if not visited[x][y]:
+                tentative_g_score = g_score[row][col] + 1
+                if tentative_g_score < g_score[x][y]:
+                    parent[x][y] = current
+                    g_score[x][y] = tentative_g_score
+                    f_score = tentative_g_score + heuristic(neighbor)
+                    heapq.heappush(open_list, (f_score, neighbor))
+
     return [], 0
+
