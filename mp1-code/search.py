@@ -226,10 +226,9 @@ def greedy(maze):
     return [], 0
 
 
-# def astar(maze):
-#     # TODO: Write your code here
-#     # return path, num_states_explored
-#     return [], 0
+# ====================================== PART 2 ===============================================
+# astar for part 1&2
+# self-built data structure
 
 import heapq
 
