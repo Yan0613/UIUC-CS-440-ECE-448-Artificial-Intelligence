@@ -26,7 +26,7 @@ files and classes when code is run, so be careful to not modify anything else.
 from queue import Queue
 from collections import deque
 import queue
-
+import  heapq
 def search(maze, searchMethod):
     return {
         "bfs": bfs,
@@ -230,48 +230,34 @@ def greedy(maze):
 # astar for part 1&2
 # self-built data structure
 
-import heapq
-
-
-def heuristic(node,goal):
-    x1, y1 = node
-    x2, y2 = goal
+def heuristic(start, distinction):
+    x1, y1 = start
+    x2, y2 = distinction
     return abs(x1 - x2) + abs(y1 - y2)
 
 def astar(maze):
     start = maze.getStart()
-    # rows, cols = maze.getDimensions()
-    goal = maze.getObjectives()[0]  # 假设有一个目标
-    open_list = [(0, start)]  # 优先级队列，初始节点的优先级为0
-    heapq.heapify(open_list)
-    came_from = {}  # 用于跟踪路径
-    g_score = {node: float('inf') for row in maze for node in row}
-    g_score[start] = 0
+    goal = maze.getObjectives()
+    pq = []  # 优先级队列
+    heapq.heappush(pq, (0, [start]))
     visited = set()
 
-    while open_list:
-        _, current = heapq.heappop(open_list)
-        row, col = current
-        visited[row][col] = True
+    while pq:
+        _, cur_path = heapq.heappop(pq)
+        row, col = cur_path[-1]
 
-        if current == goal:
-            path = []
-            while current != start:
-                path.append(current)
-            path.append(start)
-            path.reverse()
-            return path, sum(sum(visited, []))
+        #检查当前节点是否已探索
+        if (row, col) in visited:
+            continue
+        visited.add((row, col))
 
-        neighbors = maze.getNeighbors(row, col)
+        if (row, col) in goal:
+            return cur_path, len(visited)
 
-        for neighbor in neighbors:
-            x, y = neighbor
-            if not visited[x][y]:
-                tentative_g_score = g_score[row][col] + 1
-                if tentative_g_score < g_score[x][y]:
-                    g_score[x][y] = tentative_g_score
-                    f_score = tentative_g_score + heuristic(neighbor)
-                    heapq.heappush(open_list, (f_score, neighbor))
-
+        for item in maze.getNeighbors(row, col):
+            if item not in visited:
+                visited.add(item)
+                cost = len(cur_path)+heuristic(item, goal)
+                heapq.heappush(pq, (cost, cur_path + [item]))
     return [], 0
 
