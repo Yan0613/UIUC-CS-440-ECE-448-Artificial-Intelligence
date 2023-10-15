@@ -232,20 +232,22 @@ def greedy(maze):
 
 import heapq
 
+
+def heuristic(node,goal):
+    x1, y1 = node
+    x2, y2 = goal
+    return abs(x1 - x2) + abs(y1 - y2)
+
 def astar(maze):
     start = maze.getStart()
-    rows, cols = maze.getDimensions()
+    # rows, cols = maze.getDimensions()
     goal = maze.getObjectives()[0]  # 假设有一个目标
     open_list = [(0, start)]  # 优先级队列，初始节点的优先级为0
-    visited = [[False] * cols for _ in range(rows)]
-    parent = [[None] * cols for _ in range(rows)]
-    g_score = [[float('inf')] * cols for _ in range(rows)]
-    g_score[start[0]][start[1]] = 0
-
-    def heuristic(node):
-        x1, y1 = node
-        x2, y2 = goal
-        return abs(x1 - x2) + abs(y1 - y2)
+    heapq.heapify(open_list)
+    came_from = {}  # 用于跟踪路径
+    g_score = {node: float('inf') for row in maze for node in row}
+    g_score[start] = 0
+    visited = set()
 
     while open_list:
         _, current = heapq.heappop(open_list)
@@ -256,7 +258,6 @@ def astar(maze):
             path = []
             while current != start:
                 path.append(current)
-                current = parent[current[0]][current[1]]
             path.append(start)
             path.reverse()
             return path, sum(sum(visited, []))
@@ -268,7 +269,6 @@ def astar(maze):
             if not visited[x][y]:
                 tentative_g_score = g_score[row][col] + 1
                 if tentative_g_score < g_score[x][y]:
-                    parent[x][y] = current
                     g_score[x][y] = tentative_g_score
                     f_score = tentative_g_score + heuristic(neighbor)
                     heapq.heappush(open_list, (f_score, neighbor))
