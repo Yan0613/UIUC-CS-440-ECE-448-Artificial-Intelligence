@@ -48,7 +48,7 @@ pentnominos = [np.array([[0,1,1],
                   [0,12,12]])]
         
         
-board_6x10 = np.ones((6,10))
+board_6x10 = np.ones((6,10))#6行10列
 board_5x12 = np.ones((5,12))
 board_3x20 = np.ones((3,20))
 empty_chessboard = np.ones((8,8))
